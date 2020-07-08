@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>THEOplayer 2.X: Getting Started</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Chromecast SDK -->
+    <script
+      type="text/javascript"
+      src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"
+    ></script>
+
+    <!-- THEOplayer library and css -->
+    <script
+      type="text/javascript"
+      src="https://cdn.myth.theoplayer.com/4835bb22-6864-44c9-bbe0-fe511e5f8768/THEOplayer.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.myth.theoplayer.com/4835bb22-6864-44c9-bbe0-fe511e5f8768/ui.css"
+    />
+    <!-- CSS customization style -->
+    <style>
+      /* Customization css style */
+      .theo-primary-color,
+      .vjs-selected {
+        color: #c42032 !important;
+      }
+
+      .theo-primary-background {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+      }
+
+      .theo-secondary-color {
+        color: #ffffff !important;
+      }
+
+      .theo-secondary-background {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+      }
+
+      .theo-tertiary-color {
+        color: #000000 !important;
+      }
+
+      .theo-tertiary-background {
+        color: #ffffff !important;
+        background-color: #000000 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="theoplayer-container video-js theoplayer-skin vjs-fluid"></div>
+
+    <script>
+      var element = document.querySelector(".theoplayer-container");
+      var player = new THEOplayer.Player(element, {
+        libraryLocation:
+          "https://cdn.myth.theoplayer.com/4835bb22-6864-44c9-bbe0-fe511e5f8768",
+
+        allowNativeFullscreen: true
+      });
+
+      // OPTIONAL CONFIGURATION
+
+      // Customized video player parameters
+
+      THEOplayer_UI_Hotkeys(player);
+      function THEOplayer_UI_Hotkeys(player) {
+        var togglePlay = function() {
+            if (player.paused) {
+              player.play();
+            } else {
+              player.pause();
+            }
+          },
+          toggleMute = function() {
+            player.muted = !player.muted;
+          },
+          toggleFullScreen = function() {
+            if ((player.presentationMode = "fullscreen")) {
+              player.presentationMode = "inline";
+            } else {
+              player.presentationMode = "fullscreen";
+            }
+          },
+          rewind = function() {
+            player.currentTime -= 5;
+          },
+          forward = function() {
+            player.currentTime += 5;
+          },
+          increaseVolume = function() {
+            player.volume = Math.min(player.volume + 0.05, 1);
+          },
+          decreaseVolume = function() {
+            player.volume = Math.max(player.volume - 0.05, 0);
+          },
+          preventStandardHotKeyActions = function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            return false;
+          },
+          charCodeMap = {
+            32: togglePlay, // spacebar
+            37: rewind, // left
+            38: increaseVolume, // up
+            39: forward, // right
+            40: decreaseVolume, // down
+            70: toggleFullScreen, // f
+            77: toggleMute // m
+          },
+          isTHEOplayerFocused = function() {
+            var node = document.activeElement;
+            while (node !== null) {
+              if (player.element === node) {
+                return true;
+              }
+              node = node.parentNode;
+            }
+            return false;
+          },
+          processKeyEvent = function(event) {
+            var action;
+
+            if (!event) {
+              event = window.event;
+            }
+
+            action = charCodeMap[event.keyCode];
+
+            if (
+              action &&
+              !event.altKey &&
+              !event.ctrlKey &&
+              !event.shiftKey &&
+              isTHEOplayerFocused()
+            ) {
+              action();
+              return preventStandardHotKeyActions(event);
+            }
+          },
+          load = function() {
+            player.element.tabIndex = 1;
+            document.addEventListener("keydown", processKeyEvent);
+          };
+
+        load();
+
+        // Customized video player parameters
+
+        player.source = {
+          sources: [
+            {
+              src:
+                "https://cdn.magekfilmworks.link/pcma/pcma_hls_basename.m3u8",
+              type: "application/x-mpegurl"
+            }
+          ],
+          poster:
+            "https://cdn.magekfilmworks.link/pcma_hls/pcma_hls_basename_poster_frame_.0000003.jpg"
+        };
+      }
+
+      player.preload = "auto";
+    </script>
+  </body>
+</html>
